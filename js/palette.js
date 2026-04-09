@@ -6,7 +6,7 @@ const PALETTE_DATA = [
   {
     label: 'Operators',
     items: [
-      { symbol: '|',  tip: 'Alternation (OR)', displayHtml: '<span class="re-or">+</span>' },
+      { symbol: '|', tip: 'Alternation (OR)', displayHtml: '<span class="re-or">+</span>' },
       { symbol: '()', tip: 'Grouping' },
     ]
   },
@@ -14,7 +14,7 @@ const PALETTE_DATA = [
     label: 'Quantifiers',
     items: [
       { symbol: '*', tip: 'Zero or more (Kleene star)', displayHtml: 'a<sup class="re-sup">*</sup>' },
-      { symbol: '+', tip: 'One or more',                displayHtml: 'a<sup class="re-sup">+</sup>' },
+      { symbol: '+', tip: 'One or more', displayHtml: 'a<sup class="re-sup">+</sup>' },
     ]
   },
   {
@@ -153,9 +153,9 @@ function updateLetterButtons(container) {
  */
 function insertAtCursor(textarea, text) {
   const start = textarea.selectionStart;
-  const end   = textarea.selectionEnd;
+  const end = textarea.selectionEnd;
   const before = textarea.value.substring(0, start);
-  const after  = textarea.value.substring(end);
+  const after = textarea.value.substring(end);
   textarea.value = before + text + after;
 
   // If we inserted "()", place cursor inside the parens

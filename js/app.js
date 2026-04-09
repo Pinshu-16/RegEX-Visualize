@@ -14,9 +14,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const equivRe2    = document.getElementById('equiv-re2');
   const btnEquiv    = document.getElementById('btn-equiv');
   const equivResult = document.getElementById('equiv-result');
+  const testStringInput = document.getElementById('test-string');
 
   /* ── Build the palette ─────────────── */
   buildPalette(palette, reInput);
+
+  /* ── Global shortcut: $ (Shift+4) → ε ─── */
+  const epsilonInputs = [reInput, equivRe1, equivRe2, testStringInput];
+  epsilonInputs.forEach(el => {
+    if (!el) return;
+    el.addEventListener('keydown', (e) => {
+      if (e.key === '$') {
+        e.preventDefault();
+        // Insert ε at cursor position
+        const start = el.selectionStart;
+        const end = el.selectionEnd;
+        const before = el.value.substring(0, start);
+        const after = el.value.substring(end);
+        el.value = before + 'ε' + after;
+        el.selectionStart = el.selectionEnd = start + 1;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+  });
 
   /* ── Superscript & Inline-OR overlays ── */
   setupRegexOverlay(reInput, 're-overlay');
@@ -77,6 +97,36 @@ document.addEventListener('DOMContentLoaded', () => {
         btnEquiv.click();
       }
     });
+  });
+
+  /* ── String Tester ──────────────────── */
+  const btnTest         = document.getElementById('btn-test');
+  const testerResult    = document.getElementById('tester-result');
+
+  btnTest.addEventListener('click', () => {
+    const pattern = reInput.value.replace(/\s+/g, '');
+    let testStr = testStringInput.value;
+    // Convert epsilon symbol to empty string
+    if (testStr === 'ε' || testStr === 'ϵ') {
+      testStr = '';
+    }
+    if (!pattern) {
+      renderTesterError(testerResult, 'Please enter a regular expression first.');
+      return;
+    }
+    try {
+      const result = testString(pattern, testStr);
+      renderTesterResult(testerResult, result, testStr, pattern);
+    } catch (err) {
+      renderTesterError(testerResult, err.message);
+    }
+  });
+
+  testStringInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      btnTest.click();
+    }
   });
 });
 
@@ -344,26 +394,44 @@ function renderSingleDFA(minDFA, labelHtml) {
     renderDFADiagram(completeDFA, diagramContainer);
   });
 
-  // Build state label mapping: state id → q0, q1, ...
-  const stateIds = [...completeDFA.states.keys()].sort((a, b) => {
-    if (a === completeDFA.start) return -1;
-    if (b === completeDFA.start) return 1;
-    // Dead state last
-    if (a === -999) return 1;
-    if (b === -999) return 1;
-    return a - b;
-  });
+  const alpha = [...completeDFA.alphabet].sort();
+
+  // Build state label mapping chronologically using BFS: state id → q0, q1, ...
+  const mainIds = [];
+  const deadId = -999;
+  const visited = new Set();
+  const queue = [completeDFA.start];
+  visited.add(completeDFA.start);
+
+  while (queue.length > 0) {
+    const cur = queue.shift();
+    if (cur !== deadId) mainIds.push(cur);
+    const st = completeDFA.states.get(cur);
+    if (!st) continue;
+    for (const ch of alpha) {
+      const tgt = st.transitions[ch];
+      if (tgt !== undefined && !visited.has(tgt)) {
+        visited.add(tgt);
+        queue.push(tgt);
+      }
+    }
+  }
+  for (const id of completeDFA.states.keys()) {
+    if (id !== deadId && !visited.has(id)) mainIds.push(id);
+  }
+
+  const stateIds = [...mainIds];
+  if (completeDFA.states.has(deadId)) stateIds.push(deadId);
+
   const stateLabel = new Map();
   let qIdx = 0;
   stateIds.forEach((id) => {
-    if (id === -999) {
+    if (id === deadId) {
       stateLabel.set(id, 'dead');
     } else {
       stateLabel.set(id, `q${qIdx++}`);
     }
   });
-
-  const alpha = [...completeDFA.alphabet].sort();
 
   // Table element
   const table = document.createElement('table');
@@ -520,3 +588,122 @@ function formatRegexHtml(str) {
   return out;
 }
 
+/* ═══════════════════════════════════════
+   String Tester — test a string against
+   the regex via DFA simulation
+   ═══════════════════════════════════════ */
+function testString(pattern, str) {
+  const nfa  = reToNFA(pattern);
+  const dfa  = nfaToDFA(nfa);
+  const min  = minimizeDFA(dfa);
+  const completeDFA = addDeadState(min);
+
+  const alpha = [...completeDFA.alphabet].sort();
+  const DEAD = -999;
+
+  // BFS label mapping (same as renderSingleDFA)
+  const mainIds = [];
+  const visited = new Set();
+  const queue = [completeDFA.start];
+  visited.add(completeDFA.start);
+  while (queue.length > 0) {
+    const cur = queue.shift();
+    if (cur !== DEAD) mainIds.push(cur);
+    const st = completeDFA.states.get(cur);
+    if (!st) continue;
+    for (const ch of alpha) {
+      const tgt = st.transitions[ch];
+      if (tgt !== undefined && !visited.has(tgt)) {
+        visited.add(tgt);
+        queue.push(tgt);
+      }
+    }
+  }
+  for (const id of completeDFA.states.keys()) {
+    if (id !== DEAD && !visited.has(id)) mainIds.push(id);
+  }
+  const stateIds = [...mainIds];
+  if (completeDFA.states.has(DEAD)) stateIds.push(DEAD);
+
+  const stateLabel = new Map();
+  let qIdx = 0;
+  stateIds.forEach(id => {
+    stateLabel.set(id, id === DEAD ? 'dead' : `q${qIdx++}`);
+  });
+
+  // Trace the DFA step by step
+  const trace = [];
+  let current = completeDFA.start;
+  const startSt = completeDFA.states.get(current);
+  trace.push({
+    stateId: current,
+    label: stateLabel.get(current),
+    accept: startSt ? startSt.accept : false,
+    char: null,
+    dead: current === DEAD,
+  });
+
+  for (const ch of str) {
+    const st = completeDFA.states.get(current);
+    if (!st || st.transitions[ch] === undefined) {
+      // Character not in alphabet → goes to dead
+      current = DEAD;
+      trace.push({
+        stateId: current,
+        label: 'dead',
+        accept: false,
+        char: ch,
+        dead: true,
+      });
+    } else {
+      const next = st.transitions[ch];
+      current = next;
+      const nextSt = completeDFA.states.get(current);
+      trace.push({
+        stateId: current,
+        label: stateLabel.get(current) || 'dead',
+        accept: nextSt ? nextSt.accept : false,
+        char: ch,
+        dead: current === DEAD,
+      });
+    }
+  }
+
+  const finalState = completeDFA.states.get(current);
+  const accepted = finalState ? finalState.accept : false;
+
+  return { accepted, trace };
+}
+
+function renderTesterResult(container, result, testStr, pattern) {
+  container.innerHTML = '';
+
+  // Badge
+  const badge = document.createElement('div');
+  const displayStr = testStr === '' ? 'ε (empty string)' : testStr;
+  const displayPattern = pattern;
+  if (result.accepted) {
+    badge.className = 'tester-badge tester-badge--accepted';
+    badge.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>
+      Accepted — <span class="tester-badge__string">${escapeHtml(displayStr)}</span>
+      <span class="tester-badge__regex">∈ L(<code>${formatRegexHtml(displayPattern)}</code>)</span>
+    `;
+  } else {
+    badge.className = 'tester-badge tester-badge--rejected';
+    badge.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      Rejected — <span class="tester-badge__string">${escapeHtml(displayStr)}</span>
+      <span class="tester-badge__regex">∉ L(<code>${formatRegexHtml(displayPattern)}</code>)</span>
+    `;
+  }
+  container.appendChild(badge);
+}
+
+function renderTesterError(container, message) {
+  container.innerHTML = '';
+  const err = document.createElement('div');
+  err.className = 'result-error';
+  err.innerHTML = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8zm-8-4a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg> ${escapeHtml(message)}`;
+  container.appendChild(err);
+}

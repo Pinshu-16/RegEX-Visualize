@@ -176,6 +176,9 @@ function parse(pattern) {
     const t = peek();
     if (t.type === T.CHAR) {
       advance();
+      if (t.value === 'ε' || t.value === 'ϵ') {
+        return { type: N.EMPTY };
+      }
       return { type: N.LITERAL, char: t.value };
     }
     if (t.type === T.DOT) {

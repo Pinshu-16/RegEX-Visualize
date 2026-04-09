@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RegEx Visualizer — Generate · Visualize · Compare</title>
   <meta name="description" content="An interactive tool to write regular expressions with a symbol palette, generate matching strings, and verify RE equivalence." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=70" />
+  <link rel="stylesheet" href="styles.css?v=71" />
 </head>
 <body>
   <div class="bg-glow"></div>
@@ -87,6 +88,29 @@
           </div>
         </details>
 
+        <!-- String Tester Card -->
+        <div class="card" id="tester-card">
+          <div class="card__head">
+            <h2 class="card__title">String Tester</h2>
+            <p class="card__desc">Check if a specific string is accepted by the regular expression above.</p>
+          </div>
+
+          <div class="tester-inputs">
+            <div class="tester-field">
+              <label for="test-string" class="field-label">Test String</label>
+              <div class="tester-input-wrap">
+                <input type="text" id="test-string" class="field-input" placeholder="Enter a string to test…" spellcheck="false" />
+              </div>
+            </div>
+            <button id="btn-test" class="btn btn--primary btn--test">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              Test
+            </button>
+          </div>
+
+          <div class="tester-result" id="tester-result"></div>
+        </div>
+
         <!-- Equivalence Checker Card -->
         <div class="card" id="equiv-card">
           <div class="card__head">
@@ -98,14 +122,14 @@
             <div class="equiv-field">
               <label for="equiv-re1" class="field-label">Expression A</label>
               <div class="equiv-input-wrap">
-                <input type="text" id="equiv-re1" class="field-input" placeholder="e.g.  a(b|c)" spellcheck="false" />
+                <input type="text" id="equiv-re1" class="field-input overlay-input" placeholder="e.g.  a(b|c)" spellcheck="false" />
               </div>
             </div>
             <span class="equiv-vs">vs</span>
             <div class="equiv-field">
               <label for="equiv-re2" class="field-label">Expression B</label>
               <div class="equiv-input-wrap">
-                <input type="text" id="equiv-re2" class="field-input" placeholder="e.g.  ab|ac" spellcheck="false" />
+                <input type="text" id="equiv-re2" class="field-input overlay-input" placeholder="e.g.  ab|ac" spellcheck="false" />
               </div>
             </div>
           </div>
@@ -122,10 +146,10 @@
   </main>
 
   <!-- ───── Scripts ───── -->
-  <script src="js/palette.js?v=70"></script>
-  <script src="js/generator.js?v=70"></script>
-  <script src="js/equivalence.js?v=70"></script>
-  <script src="js/dfa-diagram.js?v=70"></script>
-  <script src="js/app.js?v=70"></script>
+  <script src="js/palette.js?v=71"></script>
+  <script src="js/generator.js?v=71"></script>
+  <script src="js/equivalence.js?v=71"></script>
+  <script src="js/dfa-diagram.js?v=71"></script>
+  <script src="js/app.js?v=71"></script>
 </body>
 </html>
