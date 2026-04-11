@@ -13,7 +13,7 @@ const PALETTE_DATA = [
   {
     label: 'Quantifiers',
     items: [
-      { symbol: '*', tip: 'Zero or more (Kleene star)', displayHtml: 'a<sup class="re-sup">*</sup>' },
+      { symbol: '*', tip: 'Zero or more (closure)', displayHtml: 'a<sup class="re-sup">*</sup>' },
       { symbol: '+', tip: 'One or more', displayHtml: 'a<sup class="re-sup">+</sup>' },
     ]
   },
@@ -44,6 +44,19 @@ let _isCapitalized = false;
  */
 function buildPalette(container, textarea) {
   container.innerHTML = '';
+
+  /* Support multiple target inputs: if textarea is an array,
+     track the last-focused one and insert into it. */
+  let getTarget;
+  if (Array.isArray(textarea)) {
+    let lastFocused = textarea[0];
+    textarea.forEach(el => {
+      el.addEventListener('focus', () => { lastFocused = el; });
+    });
+    getTarget = () => lastFocused;
+  } else {
+    getTarget = () => textarea;
+  }
 
   PALETTE_DATA.forEach(group => {
     const groupEl = document.createElement('div');
@@ -124,8 +137,9 @@ function buildPalette(container, textarea) {
         } else {
           insertText = item.symbol;
         }
-        insertAtCursor(textarea, insertText);
-        textarea.focus();
+        const target = getTarget();
+        insertAtCursor(target, insertText);
+        target.focus();
       });
 
       items.appendChild(btn);

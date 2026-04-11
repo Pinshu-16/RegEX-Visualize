@@ -16,8 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const equivResult = document.getElementById('equiv-result');
   const testStringInput = document.getElementById('test-string');
 
-  /* ── Build the palette ─────────────── */
+  /* ── Build the palettes ────────────── */
   buildPalette(palette, reInput);
+
+  /* Equivalence checker palette (shared between both inputs) */
+  const equivPalette = document.getElementById('equiv-palette');
+  if (equivPalette && equivRe1 && equivRe2) {
+    buildPalette(equivPalette, [equivRe1, equivRe2]);
+  }
 
   /* ── Global shortcut: $ (Shift+4) → ε ─── */
   const epsilonInputs = [reInput, equivRe1, equivRe2, testStringInput];

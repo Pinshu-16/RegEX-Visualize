@@ -115,10 +115,7 @@ h1, h2, h3, .card__title, .header__title {
 .header__title {
   font-size: 1.5rem; font-weight: 800;
   letter-spacing: -.03em;
-  background: linear-gradient(to right, #fff, #a855f7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--foreground);
 }
 .header__sub {
   font-size: .7rem;
@@ -153,7 +150,7 @@ h1, h2, h3, .card__title, .header__title {
   -webkit-backdrop-filter: var(--blur);
   transition: all .3s var(--ease);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 .card:hover {
   border-color: var(--border-hover);
@@ -189,9 +186,8 @@ h1, h2, h3, .card__title, .header__title {
   font-size: .8rem;
   color: var(--muted-fg);
   line-height: 1.45;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 .collapsible-chevron {
   width: 18px; height: 18px;
@@ -610,6 +606,27 @@ h1, h2, h3, .card__title, .header__title {
 .equiv-vs {
   font-weight: 600; font-size: .75rem; color: var(--muted-fg);
   padding-bottom: .55rem; flex-shrink: 0;
+}
+
+/* ── Equivalence Palette Row ──────────── */
+.equiv-palette-row {
+  margin-bottom: .85rem;
+}
+.palette--compact .palette__group {
+  gap: .15rem;
+}
+.palette--compact .palette__label {
+  font-size: .6rem;
+}
+.palette--compact .palette__items {
+  gap: .2rem;
+}
+.palette--compact .palette__btn {
+  font-size: .72rem;
+  padding: .18rem .4rem;
+}
+.palette--compact .palette__header-row {
+  margin-bottom: .05rem;
 }
 
 /* ── Equiv Result ──────────────────────────── */
