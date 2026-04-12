@@ -33,16 +33,11 @@ function renderDFADiagram(minDFA, containerEl) {
     if (id !== deadId && !visited.has(id)) mainIds.push(id);
   }
 
-  // State text mapping
+  // State text mapping — use BFS order (mainIds) for chronological naming
   const label = new Map();
   let qi = 0;
-  [...minDFA.states.keys()].sort((a, b) => {
-    if (a === minDFA.start) return -1;
-    if (b === minDFA.start) return 1;
-    if (a === deadId) return 1;
-    if (b === deadId) return -1;
-    return a - b;
-  }).forEach(id => label.set(id, id === deadId ? 'dead' : `q${qi++}`));
+  mainIds.forEach(id => label.set(id, `q${qi++}`));
+  if (hasDead) label.set(deadId, 'dead');
 
   // 2. Extract Edges (Grouped by target for combined arcs)
   const edges = [];
