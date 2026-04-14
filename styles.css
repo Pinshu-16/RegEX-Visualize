@@ -1012,6 +1012,34 @@ h1, h2, h3, .card__title, .header__title {
   color: var(--foreground) !important;
   background: var(--background) !important;
 }
+
+/* Epsilon row below the label */
+.tester-epsilon-row {
+  margin-bottom: .4rem;
+}
+.btn-epsilon {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  font-weight: 600;
+  padding: .2rem .55rem;
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s var(--ease);
+}
+.btn-epsilon:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-ghost);
+}
+.btn-epsilon:active {
+  transform: scale(.95);
+}
 .btn--test {
   flex-shrink: 0;
   padding: .5rem 1.25rem;

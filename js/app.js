@@ -134,6 +134,16 @@ document.addEventListener('DOMContentLoaded', () => {
       btnTest.click();
     }
   });
+
+  /* ── Epsilon button for test string ── */
+  const btnEpsilon = document.getElementById('btn-epsilon');
+  if (btnEpsilon) {
+    btnEpsilon.addEventListener('click', () => {
+      testStringInput.value = 'ε';
+      testStringInput.dispatchEvent(new Event('input', { bubbles: true }));
+      testStringInput.focus();
+    });
+  }
 });
 
 /* ── Render generated strings ──────── */
