@@ -577,9 +577,9 @@ function formatRegexHtml(str) {
     const ch = str[i];
     if (ch === '*') {
       out += '<span class="re-sup">*</span>';
-    } else if (ch === '+') {
+    } else if (ch === '=') {
       out += '<span class="re-sup">+</span>';
-    } else if (ch === '|') {
+    } else if (ch === '+' || ch === '|') {
       out += '<span class="re-or">+</span>';
     } else if (ch === '<') {
       out += '&lt;';

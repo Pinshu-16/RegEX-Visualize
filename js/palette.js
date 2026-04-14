@@ -6,7 +6,7 @@ const PALETTE_DATA = [
   {
     label: 'Operators',
     items: [
-      { symbol: '|', tip: 'Alternation (OR)', displayHtml: '<span class="re-or">+</span>' },
+      { symbol: '+', tip: 'Alternation (OR)', displayHtml: '<span class="re-or">+</span>' },
       { symbol: '()', tip: 'Grouping' },
     ]
   },
@@ -14,7 +14,7 @@ const PALETTE_DATA = [
     label: 'Quantifiers',
     items: [
       { symbol: '*', tip: 'Zero or more (closure)', displayHtml: 'a<sup class="re-sup">*</sup>' },
-      { symbol: '+', tip: 'One or more', displayHtml: 'a<sup class="re-sup">+</sup>' },
+      { symbol: '=', tip: 'One or more', displayHtml: 'a<sup class="re-sup">+</sup>' },
     ]
   },
   {

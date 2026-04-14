@@ -75,8 +75,9 @@ function tokenize(pattern) {
     }
     switch (c) {
       case '|':  tokens.push({ type: T.PIPE }); break;
+      case '+':  tokens.push({ type: T.PIPE }); break;
       case '*':  tokens.push({ type: T.STAR }); break;
-      case '+':  tokens.push({ type: T.PLUS }); break;
+      case '=':  tokens.push({ type: T.PLUS }); break;
       case '?':  tokens.push({ type: T.QUESTION }); break;
       case '(':  tokens.push({ type: T.LPAREN }); break;
       case ')':  tokens.push({ type: T.RPAREN }); break;

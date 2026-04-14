@@ -44,7 +44,7 @@
 
           <div class="input-group">
             <label for="re-input" class="sr-only">Regular Expression</label>
-            <textarea id="re-input" class="re-textarea" rows="2" spellcheck="false" placeholder="e.g.  a(b|c)*d"></textarea>
+            <textarea id="re-input" class="re-textarea" rows="2" spellcheck="false" placeholder="e.g.  a(b+c)*d"></textarea>
           </div>
 
           <!-- Palette -->
@@ -99,7 +99,7 @@
             <div class="tester-field">
               <label for="test-string" class="field-label">Test String</label>
               <div class="tester-input-wrap">
-                <input type="text" id="test-string" class="field-input" placeholder="Enter a string to test…" spellcheck="false" />
+                <input type="text" id="test-string" class="field-input" placeholder="Enter a string to test…" spellcheck="false" autocomplete="off" />
               </div>
             </div>
             <button id="btn-test" class="btn btn--primary btn--test">
@@ -122,14 +122,14 @@
             <div class="equiv-field">
               <label for="equiv-re1" class="field-label">Expression A</label>
               <div class="equiv-input-wrap">
-                <input type="text" id="equiv-re1" class="field-input overlay-input" placeholder="e.g.  a(b+c)" spellcheck="false" />
+                <input type="text" id="equiv-re1" class="field-input overlay-input" placeholder="e.g.  a(b+c)" spellcheck="false" autocomplete="off" />
               </div>
             </div>
             <span class="equiv-vs">vs</span>
             <div class="equiv-field">
               <label for="equiv-re2" class="field-label">Expression B</label>
               <div class="equiv-input-wrap">
-                <input type="text" id="equiv-re2" class="field-input overlay-input" placeholder="e.g.  ab+ac" spellcheck="false" />
+                <input type="text" id="equiv-re2" class="field-input overlay-input" placeholder="e.g.  ab+ac" spellcheck="false" autocomplete="off" />
               </div>
             </div>
           </div>
