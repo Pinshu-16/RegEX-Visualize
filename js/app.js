@@ -112,10 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
   btnTest.addEventListener('click', () => {
     const pattern = reInput.value.replace(/\s+/g, '');
     let testStr = testStringInput.value;
-    // Convert epsilon symbol to empty string
-    if (testStr === 'ε' || testStr === 'ϵ') {
-      testStr = '';
-    }
+    // Strip any epsilon symbols — they represent "empty", not a literal character
+    testStr = testStr.replace(/[εϵ]/g, '');
     if (!pattern) {
       renderTesterError(testerResult, 'Please enter a regular expression first.');
       return;
@@ -139,11 +137,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnEpsilon = document.getElementById('btn-epsilon');
   if (btnEpsilon) {
     btnEpsilon.addEventListener('click', () => {
-      testStringInput.value = 'ε';
+      // Insert ε at current cursor position (supports multiple ε)
+      const start = testStringInput.selectionStart;
+      const end = testStringInput.selectionEnd;
+      const before = testStringInput.value.substring(0, start);
+      const after = testStringInput.value.substring(end);
+      testStringInput.value = before + 'ε' + after;
+      testStringInput.selectionStart = testStringInput.selectionEnd = start + 1;
       testStringInput.dispatchEvent(new Event('input', { bubbles: true }));
       testStringInput.focus();
     });
   }
+
 });
 
 /* ── Render generated strings ──────── */
